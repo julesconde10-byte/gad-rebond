@@ -1,0 +1,289 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rebond — espace de travail</title>
+<style>
+:root{--ac:#0071e3;--bg:#f2f3f5;--card:#fff;--bd:#e4e4e8;--tx:#1d1d1f;--mut:#6a6a70;--red:#a32d2d;--amb:#92681a;--grn:#1a7f37}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;line-height:1.5;font-size:16px}
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd)}
+.top .h{max-width:780px;margin:0 auto;padding:12px 16px 6px}
+.top h1{font-size:18px;margin:0}.top .s{font-size:12px;color:var(--mut)}
+.tabs{display:flex;gap:6px;overflow-x:auto;max-width:780px;margin:0 auto;padding:8px 16px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:1px solid var(--bd);background:#fff;color:var(--tx);border-radius:20px;padding:8px 14px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.wrap{max-width:780px;margin:0 auto;padding:16px 16px 90px}
+section{display:none;animation:fade .25s ease}section.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{font-size:18px;margin:4px 0 12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.conf{display:inline-block;background:#fbeaea;color:var(--red);font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;letter-spacing:.04em;margin-bottom:8px}
+.alert{background:#fff4f0;border:1px solid #f3c5b4;border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.alert b{color:#a83a1a}
+ul{margin:6px 0;padding-left:20px}li{margin:5px 0}
+a{color:var(--ac);text-decoration:none}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{border-bottom:1px solid var(--bd);padding:9px 6px;text-align:left;vertical-align:top}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase}
+td.r,th.r{text-align:right;white-space:nowrap}
+.peer{border-left:3px solid #d2d2d8;padding:3px 0 3px 12px;margin:9px 0}.peer b{color:#111}
+.pill{font-size:11px;padding:2px 8px;border-radius:20px;margin-left:4px}.p-red{background:#fbeaea;color:var(--red)}.p-amb{background:#fdf3e3;color:var(--amb)}.p-grn{background:#e8f6ec;color:var(--grn)}
+textarea{width:100%;border:1px solid #d2d2d7;border-radius:10px;padding:11px;font:inherit;min-height:60px;margin-top:8px}
+button.b{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--ac);border-radius:10px;padding:11px 16px;min-height:44px;cursor:pointer;margin-top:8px}
+.b-fill{background:var(--ac);color:#fff}.b-out{background:#fff;color:var(--ac)}
+.docs a{display:flex;align-items:center;gap:8px;padding:12px;background:#fff;border:1px solid var(--bd);border-radius:11px;margin-bottom:8px;min-height:44px}
+.chk{display:flex;align-items:flex-start;gap:10px;padding:11px 4px;border-bottom:1px solid var(--bd);cursor:pointer}
+.chk input{width:22px;height:22px;margin-top:1px;flex:0 0 auto}
+.chk.done span{color:var(--mut);text-decoration:line-through}
+#gate{position:fixed;inset:0;background:#0b0d11;display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+#gate .box{background:#fff;border-radius:16px;padding:26px;width:100%;max-width:340px;text-align:center}
+#gate input{width:100%;padding:13px;border-radius:10px;border:1px solid #ccc;text-align:center;font-size:17px;margin:12px 0}
+#gate button{width:100%;min-height:48px;border:none;background:var(--ac);color:#fff;border-radius:10px;font-size:16px;font-weight:600}
+#gm{color:var(--red);font-size:13px;min-height:16px}
+</style></head><body>
+<div id="gate"><div class="box"><h3 style="margin:0 0 2px">Espace confidentiel</h3><p style="margin:0;color:#777;font-size:13px">Code d'accès</p>
+<input id="gi" type="password" inputmode="text" placeholder="code"><button onclick="chk()">Entrer</button><div id="gm"></div></div></div>
+
+<div id="app" style="display:none">
+<div class="top">
+ <div class="h"><h1>Rebond — mon espace</h1><div class="s">Jules Condé · LAE → POP-UP EVENT · maj 10/06/2026</div></div>
+ <div class="tabs" id="tabs"></div>
+</div>
+<div class="wrap">
+
+<section id="t-situ" class="on">
+ <div class="alert"><b>⚠️ Urgence n°1 :</b> mon crédit immo (642,53 €/mois) est en impayé depuis mars (arriéré ~1 800 €). Priorité absolue : le régulariser avec mes rentrées (800 € + loyer dès le 15/06) → c'est ce qui protège l'appart.</div>
+ <div class="card"><span class="conf">CONFIDENTIEL — cercle de confiance</span><br>
+ LAE n'est plus tenable : des coûts fixes trop lourds (~60 K€/an de loyers) face à des clients qui paient lentement. Mais la boîte était saine il y a 18 mois — <b>ce n'est pas une faute, c'est un modèle à bout de souffle</b>. Je choisis de <b>liquider proprement</b> et de <b>rebondir léger</b> (prestataire technique direct + location, web-driven). J'apprends aussi à me détacher : <b>je ne suis pas mon numéro de SIRET</b>. <b>Objectif n°1 : garder l'appartement.</b>
+ <ul><li>Juridique & social : <b>Me Tristan Queret — ACD</b></li><li>Expert-comptable : <b>Zakaria — Stratizy</b></li><li>Banque : <b>Crédit Mutuel French Horizon</b> (ex-Le Val Lorrain) — <b>Didier Peronny, directeur des engagements crédit</b> (mêmes que mon crédit immo + mes cautions)</li></ul></div>
+</section>
+
+<section id="t-plan">
+ <h2>Mon plan — ma stratégie</h2>
+ <div style="font-size:13px;color:var(--mut);margin-bottom:8px">Ce n'est pas une fuite en avant : une décision lucide, tenue par une discipline. <b>Priorité immédiate : bien fermer L'Agence.</b> Le rebond se prépare en parallèle, mais ne démarre qu'après.</div>
+
+ <div class="card"><b>1. Mon diagnostic, sans me mentir</b>
+ <div style="margin-top:5px;line-height:1.5">LAE portait ~<b>60 K€/an de loyers</b> + une masse salariale, face à des centres commerciaux qui paient lentement. La boîte était pourtant <b>saine il y a 18 mois</b> (+173 K€ de tréso). Donc ce n'est pas une faute de gestion : c'est un <b>modèle devenu intenable</b> doublé d'un retournement de marché. Je préfère le regarder en face et <b>liquider proprement</b> plutôt que m'acharner et tout aggraver.</div></div>
+
+ <div class="card"><b>2. Liquider vite ET propre — c'est ça qui protège l'appart</b>
+ <div style="margin-top:5px;line-height:1.5">Je déclare la cessation des paiements <b>sans tarder</b> (mon retard reste modéré → faible risque de comblement). Et je tiens une règle absolue : <b>zéro geste « malin »</b>. Pas de matériel sorti, pas d'actif basculé, pas de facturation fictive, rien avant l'ouverture de la procédure.</div>
+ <div style="margin-top:7px"><span class="pill p-red">Le détournement d'actif = comblement de passif ILLIMITÉ = je perds l'appart.</span> <span style="color:var(--mut)">Ma discipline est ma meilleure assurance.</span></div></div>
+
+ <div class="card"><b>3. Sauver l'appart = une négociation GLOBALE</b>
+ <div style="margin-top:5px;line-height:1.5">Le même Crédit Mutuel (Peronny) détient mon <b>crédit immo</b> ET mes <b>cautions pro</b>. Je négocie donc <b>l'ensemble</b>, pas pièce par pièce. Je régularise le crédit immo — l'impayé vient d'une <b>vacance temporaire</b> (j'ai rénové l'appart moi-même ; re-loué le 15/06 → il se repaie tout seul). J'ai des leviers juridiques (disproportion, défaut d'info annuelle, délais de grâce). Et je <b>ne signe RIEN de nouveau</b> au CM.</div></div>
+
+ <div class="card"><b>4. Le rebond — POP-UP EVENT, l'inverse exact de LAE</b>
+ <div style="margin-top:5px;line-height:1.5">Je me place en <b>prestataire technique DIRECT + location</b>, sans la couche « agence ». Le marché va dans ce sens : <b>2/3 des entreprises n'externalisent pas</b> → en étant le partenaire technique direct, <b>je capte la marge d'agence</b>. Structure ultra-légère, <b>web-driven</b> (devis/shop en ligne, encaissement d'avance, pas de force commerciale à financer), matériel <b>racheté et amorti</b> → marge <b>70-80 %</b>, point mort très bas, freelances à la demande. Exactement ce qui a manqué à LAE.</div></div>
+
+ <div class="card"><b>5. Un phoenix PROPRE (pas un tour de passe-passe)</b>
+ <div style="margin-top:5px;line-height:1.5">Je ne « bascule » rien. Je <b>rachète</b> les actifs (matériel, marque, site, Odoo, droit au bail) <b>au liquidateur</b>, avec <b>autorisation du tribunal (L642-3)</b>, financé par crédit-bail / prêt gagé — <b>jamais avec l'argent de LAE</b>. La nouvelle structure peut se créer maintenant, mais <b>n'exploite rien</b> avant la reprise validée. Bouclier anti sous-évaluation : expertise indépendante du matériel (37 395 €).</div></div>
+
+ <div class="card"><b>6. Montigny — reprendre le bail notarié, mesurer mon risque</b>
+ <div style="margin-top:5px;line-height:1.5">J'ai relu l'acte en entier (35 p.). Bonne nouvelle : <b>aucune caution personnelle</b> → à titre perso je ne risque rien (le preneur est LAE → le bail passe au liquidateur). Mais reprendre n'est pas anodin : <b>36 K€ HT/an + charges + TVA</b> (indexé ILC), <b>toutes les réparations</b> sauf les grosses (lourd, 413 m²), et surtout <b>⚠️ possible 9 ans fermes jusqu'en 2034</b> (la faculté triennale n'est prévue que pour le bailleur) ≈ <b>324 K€</b> — <b>à faire vérifier par l'avocat avant tout</b>. Mon levier : l'acte m'autorise <b>expressément à sous-louer à ma société</b>, et PFM est aussi <b>créancier de LAE (7 920 €)</b> → de quoi négocier surface/loyer/durée, via le liquidateur.</div></div>
+
+ <div class="card"><b>7. Mon équipe, cadrée proprement</b>
+ <div style="margin-top:5px;line-height:1.5"><b>Laure</b> : licenciée par le liquidateur (AGS + chômage), puis missions <b>réelles et déclarées</b> tant que je ne peux pas l'embaucher — jamais de salariée déguisée sous ARE. <b>Yves</b> : apporteur d'affaires <b>cadré par contrat</b>, commissions de marché. Aucune facturation de complaisance : tout est réel, déclaré, au prix du marché.</div></div>
+
+ <div class="card" style="opacity:.85"><b>8. Plus tard — l'horizon (pas maintenant)</b>
+ <div style="margin-top:5px;line-height:1.5">Une fois la machine lancée et rentable : monter en gamme <b>par le cash, pas par la dette</b> — opérateur technique, puis exploitation d'un lieu en <b>mandat de gestion</b> (asset-light), un lieu en propre seulement si les chiffres le justifient. Structure : <b>SASU/EURL</b> pour sortir du TNS, holding + SCI propres pour l'end-game. <b>Mais ça, c'est après — là, le travail c'est de bien fermer L'Agence.</b></div></div>
+</section>
+
+<section id="t-chiffres">
+ <h2>Mes chiffres (réels — relevés CM)</h2>
+ <div class="card"><b>Compte pro LAE</b>
+ <table><tr><td>31/12/2025</td><td class="r">+30 570 €</td></tr><tr><td>02/03/2026</td><td class="r">+145 €</td></tr><tr><td>31/03/2026</td><td class="r">−7 851 €</td></tr><tr><td>01/06/2026</td><td class="r" style="color:var(--red)">−24 338 €</td></tr></table>
+ <div style="font-size:13px;color:var(--mut);margin-top:6px">Négatif depuis mars, tout rebondit. Prêt 55K <b>en défaut</b>.</div></div>
+ <div class="card"><b>Mon exposition perso</b>
+ <table>
+ <tr><td>Caution CM (prêt 55K)</td><td class="r">30 000 €</td></tr>
+ <tr><td>Caution CM (ligne 20K)</td><td class="r">~20 000 €</td></tr>
+ <tr><td>Caution CAMCHA (Banque Pop)</td><td class="r">7 000 €</td></tr>
+ <tr><td style="padding-top:6px"><i>Sous-total cautions</i></td><td class="r" style="padding-top:6px"><i>57 000 €</i></td></tr>
+ <tr><td>URSSAF TNS</td><td class="r">~6 500 €</td></tr>
+ <tr><td>Impôt 2024</td><td class="r">2 893 €</td></tr>
+ <tr><td>Taxe foncière 2025</td><td class="r">1 092 €</td></tr>
+ <tr><td>Bail Marly (litige — fourchette)</td><td class="r">1 800 → 24 000 €</td></tr>
+ <tr><td style="border-top:1px solid var(--mut);padding-top:7px;font-weight:700">TOTAL exposition perso</td><td class="r" style="border-top:1px solid var(--mut);padding-top:7px;font-weight:700;color:var(--red)">~69 000 → 91 000 €</td></tr>
+ </table>
+ <div style="font-size:12px;color:var(--mut);margin-top:6px">Hors crédit immo (adossé à l'appart, ci-dessous). La fourchette dépend de l'issue du litige Marly.</div></div>
+ <div class="card"><b>Appartement</b> (locatif Sablon, Metz)
+ <table>
+ <tr><td>Valeur estimée</td><td class="r">~165 000 €</td></tr>
+ <tr><td>− Crédit immo restant (01/06/26)</td><td class="r">−87 948 €</td></tr>
+ <tr><td style="border-top:1px solid var(--mut);padding-top:7px;font-weight:700">= Équity (ce qui est à moi)</td><td class="r" style="border-top:1px solid var(--mut);padding-top:7px;font-weight:700;color:var(--grn,#3a8)">~77 000 €</td></tr>
+ </table>
+ <div style="font-size:13px;color:var(--mut);margin-top:6px">Échéance <b>642,53 €/mois</b>. <b>Vacant depuis octobre</b> (rénovation que j'ai faite seul) → plus de loyer = <b>crédit en impayé depuis mars</b> (arriéré ~1 800 €). <b>Re-loué 850 € dès le 15/06</b> → redevient autofinancé. Priorité : régulariser l'arriéré.</div></div>
+ <div class="card"><b>LAE — passif vs actif</b> <span style="font-size:11px;color:var(--mut)">(source Odoo, 10/06)</span>
+ <table>
+ <tr><td>Fournisseurs à payer (54 factures)</td><td class="r">112 085 €</td></tr>
+ <tr><td>Prêt pro 55K — capital restant</td><td class="r">~38 000 €</td></tr>
+ <tr><td style="border-top:1px solid var(--mut);padding-top:7px;font-weight:700">PASSIF (hors social/fiscal)</td><td class="r" style="border-top:1px solid var(--mut);padding-top:7px;font-weight:700;color:var(--red)">~150 000 €</td></tr>
+ <tr><td style="padding-top:8px">Créances clients (26 factures, comptable)</td><td class="r" style="padding-top:8px;color:var(--grn,#3a8)">57 439 €</td></tr>
+ <tr><td style="padding-left:10px;color:var(--mut)">→ réellement recouvrable</td><td class="r" style="color:var(--mut)">~25 000 €</td></tr>
+ <tr><td>Matériel (expertise, à réactualiser)</td><td class="r" style="color:var(--grn,#3a8)">&lt; 37 395 €</td></tr>
+ </table>
+ <div style="font-size:13px;color:var(--mut);margin-top:6px">⚠️ Réalisme : <b>CEETRUS 13K = solide</b>, mais <b>MBC/ASL/Rugby (~26K) peu recouvrables</b> et <b>CAMCHA 6K incertaine</b> (en liquidation aussi). Matériel réel &lt; expertise (du matos vendu). L'actif <b>ne couvre pas le passif</b> = liquidation. TEA = créancière.</div></div>
+</section>
+
+<section id="t-gad">
+ <h2>Ce que le GAD m'a renvoyé 🙏</h2>
+ <div style="font-size:13px;color:var(--mut);margin-bottom:8px">Je ne recopie pas tout — voici la <b>synthèse</b> de ce qui est ressorti, puis comment je l'ai encaissé.</div>
+ <div class="card"><b>1. Ce n'est pas un échec, et je n'en suis pas seul responsable</b><div style="margin-top:5px;line-height:1.5">Arrêter de m'autoflageller, lâcher le « sac à dos », identifier ma vraie part sans porter le poids des autres (ni celui de la famille). <span style="color:var(--mut);font-size:12px">(PA, Nico, Nico P, Laura)</span></div></div>
+ <div class="card"><b>2. Liquider, c'est la bonne décision — il faut en faire le deuil</b><div style="margin-top:5px;line-height:1.5">Plusieurs l'ont dit clairement : c'est la meilleure chose à faire. Faire le deuil de cette vie pour en commencer une autre, plutôt que de s'acharner. <span style="color:var(--mut);font-size:12px">(Jean, Adele)</span></div></div>
+ <div class="card"><b>3. Agir maintenant, en solutionniste</b><div style="margin-top:5px;line-height:1.5">Maîtriser au lieu de subir, faire sauter les verrous un par un, me projeter à 6 mois. « T'as les idées et les ressources. » <span style="color:var(--mut);font-size:12px">(Virg, PA, Laura)</span></div></div>
+ <div class="card"><b>4. Mieux m'entourer — et le faire pour moi</b><div style="margin-top:5px;line-height:1.5">Seul vaut mieux que mal accompagné ; redevenir libre, m'entourer autrement, me battre pour ceux que j'aime et faire des choses pour moi. <span style="color:var(--mut);font-size:12px">(Quentin, Zak, Karine, Jean)</span></div></div>
+ <div class="card" style="border-left:3px solid var(--acc,#6a9)">
+  <b>Comment je l'ai pris</b>
+  <div style="margin-top:6px;line-height:1.55">C'est compliqué de digérer tout ça. Mais je suis <b>de plus en plus en accord</b> avec cette décision. Ce qui m'aide, c'est le <b>détachement</b> : je comprends que <b>je ne suis pas mon numéro de SIRET</b>. L'entreprise qui s'arrête, ce n'est pas moi qui m'arrête. Entendre « ce n'est pas un échec » de gens que je respecte, ça desserre quelque chose. J'avance vers la suite : repartir léger, libre, et garder mon appart.</div>
+ </div>
+</section>
+
+<section id="t-q">
+ <h2>Mes questions — votre avis 🙏</h2>
+ <div style="font-size:13px;color:var(--mut);margin-bottom:6px">Réponds à ce qui te parle. « Envoyer » ouvre un mail pré-rempli ; « Copier » te laisse coller ailleurs.</div>
+ <div id="qs"></div>
+</section>
+
+<section id="t-todo">
+ <h2>Les choses à régler</h2>
+ <div class="card" id="cklist"></div>
+ <div style="font-size:12px;color:var(--mut)">Tes coches sont mémorisées sur cet appareil.</div>
+</section>
+
+<section id="t-res">
+ <h2>Ressources (vérifier les pièces)</h2>
+ <div class="card"><b>Les pièces détaillées</b> (contrats, baux, chiffres complets) restent <b>privées</b>. Je les présente sur demande, en direct, à qui en a besoin dans le cercle.</div>
+ <div style="font-size:12px;color:var(--mut)">(Liens actifs quand la page est ouverte depuis le dossier contenant « PIECES ».)</div>
+</section>
+
+</div></div>
+<script>
+var CODE='JCGAD26', EMAIL='jconde@outlook.fr';
+var SUPA_URL='https://ufgofdmxiexgespxubqf.supabase.co', SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmZ29mZG14aWV4Z2VzcHh1YnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwNzk3MDgsImV4cCI6MjA5NjY1NTcwOH0._pLl18Vchm3MqTM7VCBSUPRiPnBVRB8io8xqu605YA8'; /* clé anon publique = OK dans le navigateur (RLS active) */
+function supaOn(){return SUPA_URL&&SUPA_KEY;}
+var TABS=[['t-situ','Situation'],['t-plan','Plan'],['t-chiffres','Chiffres'],['t-gad','GAD'],['t-q','Questions'],['t-todo','À régler'],['t-res','Ressources']];
+var QUESTIONS=[
+ {th:"Déposer le bilan maintenant",
+  pl:"Je compte déposer le bilan de LAE cette semaine avec mon avocat : mon compte pro est négatif depuis mars (~−24K), tout rebondit, et attendre n'aggrave que le risque de déclaration tardive. Un retard modéré limite le risque de comblement.",
+  fix:"La décision est déjà prise avec l'avocat (cessation des paiements ≈ mars-avril → on dépose sans tarder).",
+  q:"Vous l'avez vécu comment, le jour du dépôt ? Qu'auriez-vous préparé AVANT d'y aller ?"},
+ {th:"Garder l'appart plutôt que le vendre",
+  pl:"Mon appart locatif (équity ~77K, crédit 88K au même CM que mes cautions pro) est mon seul actif perso. C'est un bon investissement : une fois re-loué il s'autofinance, et au-delà de l'affect, il me fait une vraie sécurité (patrimoine + filet de secours). Je compte le garder : régulariser le crédit immo + négocier un protocole global avec le CM.",
+  fix:"L'appart n'est PAS pris dans la liquidation (perso, séparé) ; le risque réel = l'arriéré du crédit immo + la caution 30K.",
+  q:"Selon vous, est-ce JOUABLE de négocier la sauvegarde de l'appart (vu que mes cautions pro sont au même CM) ? Ou vaut-il mieux le vendre pour repartir vraiment libre ?"},
+ {th:"Négocier mes cautions avec la banque",
+  pl:"Je suis caution perso ~50K au CM + 7K Banque Pop. Je compte proposer un étalement sur 5-7 ans en jouant la bonne foi : une saisie derrière une hypothèque de 88K leur rapporte moins qu'un plan.",
+  fix:"Les leviers juridiques sont identifiés (délais 1343-5, disproportion 2300, défaut d'info annuelle 2302, subrogation 2314).",
+  q:"Comment vous avez abordé le banquier concrètement (1er rdv, ton, avec avocat ?) et quelle décote vous avez obtenue ?"},
+ {th:"Financer le rebond à sec",
+  pl:"Je veux relancer léger (location + presta technique \"pop-up\", web-driven, sans prospection). Mais je suis à zéro. Je compte financer le matériel par prêt d'honneur / ADIE / crédit-bail plutôt qu'en cash.",
+  fix:"Les dispositifs sont identifiés (prêt d'honneur taux 0, ADIE, crédit-bail, ACRE) ; le rachat du matos passe par une offre au liquidateur.",
+  q:"Lequel a vraiment marché pour vous ? Délais réels ? À qui parler en Moselle ?"},
+ {th:"Structurer la nouvelle boîte",
+  pl:"Je compte monter une SASU (pour sortir du TNS/URSSAF) puis, plus tard, une holding propre et neuve. Objectif : charges fixes basses, ne jamais refaire l'erreur des 60K/an de loyers.",
+  fix:"Le choix SASU (assimilé-salarié, hors TNS) est clair ; rester clean évite toute interdiction de gérer.",
+  q:"SASU ou autre ? Quand relancer (avant/après la clôture) ? Comment vous avez regagné la confiance bancaire ?"},
+ {th:"Sortir du litige Harand (bail Marly)",
+  pl:"Le bailleur veut me faire courir le loyer jusqu'2029 alors que j'ai résilié, et sa famille me harcèle (sa plainte a été classée sans suite). Je compte m'appuyer sur la résiliation + le classement + les preuves de harcèlement.",
+  fix:"Les leviers juridiques existent (résiliation, classement sans suite) ; c'est le terrain de l'avocat baux.",
+  q:"Comment tenir face au harcèlement familial sans s'épuiser ? Comment négocier une sortie ?"},
+ {th:"Tenir mentalement dans le tunnel",
+  pl:"Je compte avancer étape par étape sans m'effondrer, en gardant le cap sur le rebond. Mais c'est lourd à porter, seul et en secret.",
+  fix:"",
+  q:"Qu'est-ce qui vous a aidé à tenir ? Y a-t-il une urgence psy à ne pas négliger ?"},
+ {th:"L'erreur à ne pas refaire",
+  pl:"Je compte repartir sur un modèle volontairement léger et low-cost en fixe, pour ne pas reproduire ce qui m'a tué (coûts structurels, dépendance aux centres commerciaux qui ne paient pas).",
+  fix:"",
+  q:"Quelle erreur regrettez-vous ? Quel conseil auriez-vous aimé recevoir au début ?"},
+ {th:"Préserver mes dossiers en cours",
+  pl:"J'ai déjà du pipeline : 2 à 5 petites prestations en juin, et 3 dossiers pour septembre dont deux à 15 K€. Je veux éviter de les perdre pendant la transition (liquidation → nouvelle structure), mais proprement.",
+  warn:"À cadrer impérativement avec l'avocat AVANT d'agir : un devis émis par LAE = un contrat de LAE → c'est le liquidateur qui décide de le poursuivre, et les détourner vers une autre société pendant la liquidation est risqué (détournement de clientèle).",
+  q:"Comment vous avez géré les affaires en cours pendant votre transition, sans perdre les clients ni faire d'erreur ?"}
+];
+var TODO=[
+ "Régulariser le crédit immo (mai + juin) — PRIORITÉ",
+ "Avocat Queret : déposer le bilan cette semaine",
+ "Stratizy : situation intermédiaire",
+ "Marly : avocat baux + dossier harcèlement",
+ "CAMCHA : rendre mes parts + lever la caution 7K",
+ "Laure : licenciement par le liquidateur (AGS)",
+ "Matériel : offre de reprise au liquidateur",
+ "URSSAF perso : délai + dossier CPSTI",
+ "Ouvrir un compte dans une autre banque (anti-compensation)",
+ "Garder vivantes : assurance matériel + AG2R",
+ "Récupérer : contrat ligne 20K + acte caution CAMCHA"
+];
+function reveal(){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';build();}
+function chk(){if(document.getElementById('gi').value.trim()===CODE){reveal();}else{document.getElementById('gm').textContent='Code incorrect.';}}
+document.getElementById('gi').addEventListener('keydown',function(e){if(e.key==='Enter')chk();});
+function show(id){TABS.forEach(function(t){document.getElementById(t[0]).classList.toggle('on',t[0]===id);});
+ Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(b){b.classList.toggle('on',b.dataset.t===id);});
+ window.scrollTo(0,0);}
+function renderList(box,arr){
+ box.textContent='';
+ if(!arr||!arr.length){var n=document.createElement('div');n.style.cssText='font-size:12px;color:var(--mut);font-style:italic;margin:4px 0';n.textContent='Aucun commentaire pour l\'instant — sois le premier.';box.appendChild(n);return;}
+ arr.forEach(function(cc){
+  var dt=cc.date||(cc.created_at?(function(){try{return new Date(cc.created_at).toLocaleDateString('fr-FR');}catch(e){return '';}})():'');
+  var cm=document.createElement('div');cm.style.cssText='margin:6px 0;padding:7px 9px;background:rgba(140,140,140,.10);border-left:2px solid var(--acc,#6a9);border-radius:5px';
+  var hd=document.createElement('div');hd.style.cssText='font-size:12px;color:var(--mut);margin-bottom:2px;font-weight:600';hd.textContent=(cc.name||'Anonyme')+(dt?' · '+dt:'');
+  var tx=document.createElement('div');tx.style.cssText='font-size:14px;line-height:1.4';tx.textContent=cc.text;
+  cm.appendChild(hd);cm.appendChild(tx);box.appendChild(cm);
+ });
+}
+function rc(box,i){
+ if(supaOn()){
+  box.textContent='';var ld=document.createElement('div');ld.style.cssText='font-size:12px;color:var(--mut)';ld.textContent='Chargement des avis…';box.appendChild(ld);
+  fetch(SUPA_URL+'/rest/v1/comments?question=eq.'+i+'&order=created_at.asc',{headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY}})
+   .then(function(r){return r.json();}).then(function(arr){renderList(box,arr);})
+   .catch(function(){box.textContent='';var e=document.createElement('div');e.style.cssText='font-size:12px;color:var(--mut)';e.textContent='(connexion impossible — réessaie plus tard)';box.appendChild(e);});
+ }else{
+  var arr=[];try{arr=JSON.parse(localStorage.getItem('cmts_q'+i)||'[]');}catch(e){}renderList(box,arr);
+ }
+}
+function addComment(i){
+ var t=document.getElementById('qa'+i).value.trim();if(!t)return;
+ var n=document.getElementById('nm'+i).value.trim()||'Anonyme';
+ if(supaOn()){
+  fetch(SUPA_URL+'/rest/v1/comments',{method:'POST',headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({question:i,name:n,text:t})})
+   .then(function(r){if(!r.ok)throw 0;document.getElementById('qa'+i).value='';rc(document.getElementById('cb'+i),i);})
+   .catch(function(){alert('Envoi impossible — vérifie ta connexion.');});
+ }else{
+  var arr=[];try{arr=JSON.parse(localStorage.getItem('cmts_q'+i)||'[]');}catch(e){}
+  var dt='';try{dt=new Date().toLocaleDateString('fr-FR');}catch(e){}
+  arr.push({name:n,text:t,date:dt});localStorage.setItem('cmts_q'+i,JSON.stringify(arr));
+  document.getElementById('qa'+i).value='';rc(document.getElementById('cb'+i),i);
+ }
+}
+function build(){
+ var nav=document.getElementById('tabs'); if(nav.dataset.d){return} nav.dataset.d='1';
+ TABS.forEach(function(t){var b=document.createElement('button');b.className='tab'+(t[0]==='t-situ'?' on':'');b.textContent=t[1];b.dataset.t=t[0];b.addEventListener('click',function(){show(t[0]);});nav.appendChild(b);});
+ var c=document.getElementById('qs');
+ QUESTIONS.forEach(function(q,i){
+  var d=document.createElement('div');d.className='card';
+  var l=document.createElement('div');var s=document.createElement('b');s.textContent='Q'+(i+1)+'. '+q.th;l.appendChild(s);
+  var pl=document.createElement('div');pl.style.cssText='margin:6px 0;line-height:1.45';pl.textContent=q.pl;
+  d.appendChild(l);d.appendChild(pl);
+  if(q.fix){var fx=document.createElement('div');fx.style.cssText='margin:6px 0;padding:6px 9px;background:rgba(110,170,120,.13);border-radius:6px;font-size:13px;color:var(--mut)';fx.textContent='✅ Déjà calé : '+q.fix;d.appendChild(fx);}
+  if(q.warn){var wn=document.createElement('div');wn.style.cssText='margin:6px 0;padding:6px 9px;background:rgba(220,150,50,.15);border-radius:6px;font-size:13px;color:var(--mut)';wn.textContent='⚠️ À cadrer : '+q.warn;d.appendChild(wn);}
+  var ak=document.createElement('div');ak.style.cssText='margin:9px 0 5px;font-weight:600';ak.textContent='🙋 '+q.q;d.appendChild(ak);
+  var cb=document.createElement('div');cb.id='cb'+i;d.appendChild(cb);rc(cb,i);
+  var nm=document.createElement('input');nm.id='nm'+i;nm.placeholder='Ton prénom';nm.style.cssText='width:100%;box-sizing:border-box;margin:8px 0 5px;padding:8px;border-radius:6px;border:1px solid rgba(150,150,150,.35);background:transparent;color:inherit;font-size:14px';
+  var ta=document.createElement('textarea');ta.id='qa'+i;ta.placeholder='Ton commentaire : jouable ? mieux ? urgences ?';
+  var full=function(){return 'Q'+(i+1)+' — '+q.th+'\n\n'+q.pl+(q.fix?'\n\n[Déjà calé : '+q.fix+']':'')+(q.warn?'\n\n[À cadrer : '+q.warn+']':'')+'\n\n🙋 '+q.q+'\n\n--- '+(document.getElementById('nm'+i).value||'Anonyme')+' ---\n'+document.getElementById('qa'+i).value;};
+  var bb=document.createElement('div');
+  var pub=document.createElement('button');pub.className='b b-fill';pub.textContent='Publier';
+  pub.addEventListener('click',function(){addComment(i);});
+  var e=document.createElement('button');e.className='b b-out';e.style.marginLeft='8px';e.textContent='Envoyer à Jules';
+  e.addEventListener('click',function(){window.location.href='mailto:'+EMAIL+'?subject='+encodeURIComponent('Avis GAD Q'+(i+1)+' — '+q.th)+'&body='+encodeURIComponent(full());});
+  bb.appendChild(pub);bb.appendChild(e);d.appendChild(nm);d.appendChild(ta);d.appendChild(bb);c.appendChild(d);
+ });
+ var ck=document.getElementById('cklist');
+ TODO.forEach(function(it,i){
+  var key='todo'+i;var done=localStorage.getItem(key)==='1';
+  var row=document.createElement('label');row.className='chk'+(done?' done':'');
+  var box=document.createElement('input');box.type='checkbox';box.checked=done;
+  var sp=document.createElement('span');sp.textContent=it;
+  box.addEventListener('change',function(){localStorage.setItem(key,box.checked?'1':'0');row.classList.toggle('done',box.checked);});
+  row.appendChild(box);row.appendChild(sp);ck.appendChild(row);
+ });
+}
+</script>
+</body></html>
