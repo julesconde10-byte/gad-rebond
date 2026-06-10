@@ -48,6 +48,8 @@ button.b{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--ac);
  <div class="tabs" id="tabs"></div>
 </div>
 <div class="wrap">
+<button id="editbtn" onclick="enterEdit()" title="Éditer (réservé)" style="position:fixed;right:14px;bottom:14px;z-index:40;border:none;background:var(--ac);color:#fff;width:46px;height:46px;border-radius:50%;font-size:20px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)">✏️</button>
+<div id="savebar" onclick="saveEdit()" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--ac);color:#fff;padding:15px;text-align:center;font-weight:700;cursor:pointer">💾 Enregistrer mes modifications</div>
 
 <section id="t-situ" class="on">
  <div class="alert"><b>⚠️ Urgence n°1 :</b> mon crédit immo (appart locatif) est en impayé depuis mars, à cause d'une vacance le temps de la rénovation. Re-loué dès le 15/06 → priorité : le régulariser. C'est ce qui protège l'appart.</div>
@@ -195,6 +197,7 @@ button.b{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--ac);
 var CODE='JCGAD26', EMAIL='jconde@outlook.fr';
 var SUPA_URL='https://ufgofdmxiexgespxubqf.supabase.co', SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmZ29mZG14aWV4Z2VzcHh1YnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwNzk3MDgsImV4cCI6MjA5NjY1NTcwOH0._pLl18Vchm3MqTM7VCBSUPRiPnBVRB8io8xqu605YA8'; /* clé anon publique = OK dans le navigateur (RLS active) */
 function supaOn(){return SUPA_URL&&SUPA_KEY;}
+var EDITCODE='JCEDIT26'; var EDITABLE=['t-situ','t-plan','t-time','t-chiffres','t-gad','t-res'];
 var TABS=[['t-situ','Situation'],['t-plan','Plan'],['t-time','Planning'],['t-chiffres','Chiffres'],['t-gad','GAD'],['t-q','Questions'],['t-todo','À régler'],['t-res','Ressources']];
 var QUESTIONS=[
  {th:"Déposer le bilan maintenant",
@@ -262,7 +265,7 @@ var TODO=[
  "🚀 Financer le rachat (crédit-bail / prêt d'honneur — jamais les fonds de LAE)",
  "🚀 Lancer le site + location/presta directe ; cadrer Yves ; déposer la marque INPI"
 ];
-function reveal(){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';build();}
+function reveal(){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';build();loadContent();}
 function chk(){if(document.getElementById('gi').value.trim()===CODE){reveal();}else{document.getElementById('gm').textContent='Code incorrect.';}}
 document.getElementById('gi').addEventListener('keydown',function(e){if(e.key==='Enter')chk();});
 function show(id){TABS.forEach(function(t){document.getElementById(t[0]).classList.toggle('on',t[0]===id);});
@@ -303,6 +306,11 @@ function addComment(i){
   document.getElementById('qa'+i).value='';rc(document.getElementById('cb'+i),i);
  }
 }
+function _ser(el){var s="";var n=el.childNodes;for(var i=0;i<n.length;i++){try{s+=new XMLSerializer().serializeToString(n[i]);}catch(e){s+=(n[i].textContent||"");}}return s;}
+function _setH(el,h){var dp=new DOMParser().parseFromString("<body>"+h+"</body>","text/html");el.replaceChildren.apply(el,Array.prototype.slice.call(dp.body.childNodes));}
+function loadContent(){if(!supaOn())return;fetch(SUPA_URL+"/rest/v1/content?select=*",{headers:{apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY}}).then(function(r){return r.json();}).then(function(rows){rows.forEach(function(row){var el=document.getElementById(row.id);if(el&&row.html&&EDITABLE.indexOf(row.id)>=0){_setH(el,row.html);}});}).catch(function(){});}
+function enterEdit(){var c=prompt("Code éditeur (réservé à Jules) :");if(c!==EDITCODE){if(c!==null){alert("Code incorrect");}return;}EDITABLE.forEach(function(id){var el=document.getElementById(id);if(el){el.contentEditable=true;el.style.outline="2px dashed var(--ac)";el.style.outlineOffset="4px";}});document.getElementById("savebar").style.display="block";document.getElementById("editbtn").style.display="none";window.scrollTo(0,0);}
+function saveEdit(){var sb=document.getElementById("savebar");sb.textContent="Enregistrement…";var tot=EDITABLE.length,done=0;EDITABLE.forEach(function(id){var el=document.getElementById(id);if(!el){done++;return;}fetch(SUPA_URL+"/rest/v1/content",{method:"POST",headers:{apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json",Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:id,html:_ser(el)})}).then(function(r){el.contentEditable=false;el.style.outline="none";done++;if(done>=tot){sb.style.display="none";document.getElementById("editbtn").style.display="block";alert("Modifications enregistrées et partagées ✅");}}).catch(function(){sb.textContent="Erreur — réessaie";});});}
 function build(){
  var nav=document.getElementById('tabs'); if(nav.dataset.d){return} nav.dataset.d='1';
  TABS.forEach(function(t){var b=document.createElement('button');b.className='tab'+(t[0]==='t-situ'?' on':'');b.textContent=t[1];b.dataset.t=t[0];b.addEventListener('click',function(){show(t[0]);});nav.appendChild(b);});
