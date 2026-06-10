@@ -309,12 +309,10 @@ function addComment(i){
 function _ser(el){var s="";var n=el.childNodes;for(var i=0;i<n.length;i++){try{s+=new XMLSerializer().serializeToString(n[i]);}catch(e){s+=(n[i].textContent||"");}}return s;}
 function _setH(el,h){var dp=new DOMParser().parseFromString("<body>"+h+"</body>","text/html");el.replaceChildren.apply(el,Array.prototype.slice.call(dp.body.childNodes));}
 function loadContent(){if(!supaOn())return;fetch(SUPA_URL+"/rest/v1/content?select=*",{headers:{apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY}}).then(function(r){return r.json();}).then(function(rows){rows.forEach(function(row){var el=document.getElementById(row.id);if(el&&row.html&&EDITABLE.indexOf(row.id)>=0){_setH(el,row.html);}});}).catch(function(){});}
-function enterEdit(){var c=prompt("Code éditeur (réservé à Jules) :");if(c!==EDITCODE){if(c!==null){alert("Code incorrect");}return;}EDITABLE.forEach(function(id){var el=document.getElementById(id);if(el){el.contentEditable=true;el.style.outline="2px dashed var(--ac)";el.style.outlineOffset="4px";}});document.getElementById("savebar").style.display="block";document.getElementById("editbtn").style.display="none";window.scrollTo(0,0);}
-function saveEdit(){var sb=document.getElementById("savebar");sb.textContent="Enregistrement…";var tot=EDITABLE.length,done=0;EDITABLE.forEach(function(id){var el=document.getElementById(id);if(!el){done++;return;}fetch(SUPA_URL+"/rest/v1/content",{method:"POST",headers:{apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json",Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:id,html:_ser(el)})}).then(function(r){el.contentEditable=false;el.style.outline="none";done++;if(done>=tot){sb.style.display="none";document.getElementById("editbtn").style.display="block";alert("Modifications enregistrées et partagées ✅");}}).catch(function(){sb.textContent="Erreur — réessaie";});});}
-function build(){
- var nav=document.getElementById('tabs'); if(nav.dataset.d){return} nav.dataset.d='1';
- TABS.forEach(function(t){var b=document.createElement('button');b.className='tab'+(t[0]==='t-situ'?' on':'');b.textContent=t[1];b.dataset.t=t[0];b.addEventListener('click',function(){show(t[0]);});nav.appendChild(b);});
- var c=document.getElementById('qs');
+function enterEdit(){var c=prompt("Code éditeur (réservé à Jules) :");if(c!==EDITCODE){if(c!==null){alert("Code incorrect");}return;}EDITABLE.forEach(function(id){var el=document.getElementById(id);if(el){el.contentEditable=true;el.style.outline="2px dashed var(--ac)";el.style.outlineOffset="4px";}});if(!document.getElementById("qedit")){var qb=document.createElement("button");qb.id="qedit";qb.className="b b-out";qb.style.marginBottom="10px";qb.textContent="✏️ Éditer les questions";qb.addEventListener("click",editQ);var qs=document.getElementById("qs");qs.parentNode.insertBefore(qb,qs);}if(!document.getElementById("tedit")){var tb=document.createElement("button");tb.id="tedit";tb.className="b b-out";tb.style.marginBottom="10px";tb.textContent="✏️ Éditer la to-do";tb.addEventListener("click",editT);var ck=document.getElementById("cklist");ck.parentNode.insertBefore(tb,ck);}document.getElementById("savebar").style.display="block";document.getElementById("editbtn").style.display="none";window.scrollTo(0,0);alert("Mode édition activé. Édite le texte des blocs directement ; pour les Questions et la To-do, clique « ✏️ Éditer ». Puis « Enregistrer » en bas.");}
+function saveEdit(){var sb=document.getElementById("savebar");sb.textContent="Enregistrement…";var tot=EDITABLE.length,done=0;EDITABLE.forEach(function(id){var el=document.getElementById(id);if(!el){done++;return;}fetch(SUPA_URL+"/rest/v1/content",{method:"POST",headers:{apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json",Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:id,html:_ser(el)})}).then(function(r){el.contentEditable=false;el.style.outline="none";done++;if(done>=tot){sb.style.display="none";document.getElementById("editbtn").style.display="block";var qe=document.getElementById("qedit");if(qe)qe.remove();var te=document.getElementById("tedit");if(te)te.remove();renderQuestions();renderTodo();alert("Modifications enregistrées et partagées ✅");}}).catch(function(){sb.textContent="Erreur — réessaie";});});}
+function renderQuestions(){
+ var c=document.getElementById('qs');c.textContent='';
  QUESTIONS.forEach(function(q,i){
   var d=document.createElement('div');d.className='card';
   var l=document.createElement('div');var s=document.createElement('b');s.textContent='Q'+(i+1)+'. '+q.th;l.appendChild(s);
@@ -334,7 +332,9 @@ function build(){
   e.addEventListener('click',function(){window.location.href='mailto:'+EMAIL+'?subject='+encodeURIComponent('Avis GAD Q'+(i+1)+' — '+q.th)+'&body='+encodeURIComponent(full());});
   bb.appendChild(pub);bb.appendChild(e);d.appendChild(nm);d.appendChild(ta);d.appendChild(bb);c.appendChild(d);
  });
- var ck=document.getElementById('cklist');
+}
+function renderTodo(){
+ var ck=document.getElementById('cklist');ck.textContent='';
  TODO.forEach(function(it,i){
   var key='todo'+i;var done=localStorage.getItem(key)==='1';
   var row=document.createElement('label');row.className='chk'+(done?' done':'');
@@ -343,6 +343,24 @@ function build(){
   box.addEventListener('change',function(){localStorage.setItem(key,box.checked?'1':'0');row.classList.toggle('done',box.checked);});
   row.appendChild(box);row.appendChild(sp);ck.appendChild(row);
  });
+}
+function qToText(){return QUESTIONS.map(function(q){var s='T: '+q.th+'\nP: '+q.pl;if(q.fix)s+='\nF: '+q.fix;if(q.warn)s+='\nW: '+q.warn;s+='\nQ: '+q.q;return s;}).join('\n===\n');}
+function textToQ(t){return t.split(/\n===\n/).map(function(b){var o={th:'',pl:'',q:''};b.split('\n').forEach(function(ln){var m=ln.match(/^([TPFWQ]):\s?(.*)$/);if(!m)return;if(m[1]==='T')o.th=m[2];else if(m[1]==='P')o.pl=m[2];else if(m[1]==='F')o.fix=m[2];else if(m[1]==='W')o.warn=m[2];else if(m[1]==='Q')o.q=m[2];});return o;}).filter(function(o){return o.th||o.q;});}
+function saveData(id,txt,cb){fetch(SUPA_URL+'/rest/v1/content',{method:'POST',headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:id,html:txt})}).then(function(r){if(cb)cb(r.ok);}).catch(function(){if(cb)cb(false);});}
+function editPanel(boxId,id,val,hintTxt,onSave){
+ var c=document.getElementById(boxId);c.textContent='';
+ var h=document.createElement('div');h.style.cssText='font-size:12px;color:var(--mut);margin-bottom:6px';h.textContent=hintTxt;
+ var ta=document.createElement('textarea');ta.value=val;ta.style.cssText='width:100%;box-sizing:border-box;min-height:320px;font-size:13px;line-height:1.5';
+ var sv=document.createElement('button');sv.className='b b-fill';sv.textContent='💾 Enregistrer';
+ sv.addEventListener('click',function(){onSave(ta.value);saveData(id,ta.value,function(ok){alert(ok?'Enregistré et partagé ✅':'Erreur d\'enregistrement');});});
+ c.appendChild(h);c.appendChild(ta);c.appendChild(sv);
+}
+function editQ(){editPanel('qs','__questions__',qToText(),'Une question par bloc — T: titre · P: intention · F: déjà calé (option) · W: à cadrer (option) · Q: question ouverte. Sépare chaque question par une ligne contenant uniquement ===',function(v){QUESTIONS=textToQ(v);renderQuestions();});}
+function editT(){editPanel('cklist','__todo__',TODO.join('\n'),'Un élément par ligne. Ajoute/supprime/réordonne librement.',function(v){TODO=v.split('\n').filter(function(x){return x.trim();});renderTodo();});}
+function build(){
+ var nav=document.getElementById('tabs'); if(nav.dataset.d){return} nav.dataset.d='1';
+ TABS.forEach(function(t){var b=document.createElement('button');b.className='tab'+(t[0]==='t-situ'?' on':'');b.textContent=t[1];b.dataset.t=t[0];b.addEventListener('click',function(){show(t[0]);});nav.appendChild(b);});
+ renderQuestions();renderTodo();
 }
 </script>
 </body></html>
